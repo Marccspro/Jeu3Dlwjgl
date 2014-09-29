@@ -2,6 +2,7 @@ package fr.veridian.main;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import fr.veridian.main.math.Vector3f;
 import fr.veridian.main.render.Camera;
@@ -14,7 +15,7 @@ public class Main {
 	boolean running = false;
 
 	Camera cam;
-
+	
 	public Main() {
 		DisplayManager.create(720, 480, "Jeu 3D lwjgl");
 		cam = new Camera(new Vector3f(0, 0, 0));
@@ -62,6 +63,12 @@ public class Main {
 				DisplayManager.update();
 				frames++;
 				rendered = true;
+			}else {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}				
 			}
 
 			if (System.currentTimeMillis() - timer > 1000) {
@@ -70,14 +77,6 @@ public class Main {
 				ticks = 0;
 				frames = 0;
 			}
-
-//			if (rendered && FRAME_CAP >= 60) {
-//				try {
-//					Thread.sleep((int) (1000.0 / FRAME_CAP));
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
 		}
 		exit();
 	}
@@ -90,22 +89,41 @@ public class Main {
 	}
 
 	public void render() {
+		if (Display.wasResized()) {
+			glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		}
 		DisplayManager.clearBuffers();
 		cam.getPerspectiveProjection();
 		cam.update();
 
-		glBegin(GL_QUADS);
-		glColor3f(0.0f, 1.0f, 1.0f);
-		glVertex3f(-1.0f, -0.5f, -1.0f);
+		glBegin(GL_TRIANGLES);
+		
+		glColor3f(1, 1, 1);
+	
+		glVertex3f(0, 0, 0);
+		glVertex3f(1, 0, -1);
+		glVertex3f(1, 0, 0);
 
-		glColor3f(1.0f, 0.0f, 1.0f);
-		glVertex3f(1.0f, -0.5f, -1.0f);
+		glVertex3f(0, 0, -1);
+		glVertex3f(1, 0, -1);
+		glVertex3f(0, 0, 0);
 
-		glColor3f(1.0f, 1.0f, 0.0f);
-		glVertex3f(1.0f, -0.5f, -3.0f);
+		glVertex3f(0, 0, -1);
+		glColor3f(1, 0, 0);glVertex3f(0.5f, 1, -0.5f);glColor3f(1, 1, 1);
+		glVertex3f(1, 0, -1);
+		
+		glVertex3f(0, 0, -1);
+		glVertex3f(0, 0, 0);
+		glColor3f(0, 1, 0);glVertex3f(0.5f, 1, -0.5f);glColor3f(1, 1, 1);
 
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glVertex3f(-1.0f, -0.5f, -3.0f);
+		glColor3f(0, 0, 1);glVertex3f(0.5f, 1, -0.5f);glColor3f(1, 1, 1);
+		glVertex3f(1, 0, 0);
+		glVertex3f(1, 0, -1);
+
+		glVertex3f(0, 0, 0);
+		glVertex3f(1, 0, 0);
+		glColor3f(1, 1, 0);glVertex3f(0.5f, 1, -0.5f);
+		
 		glEnd();
 	}
 

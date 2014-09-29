@@ -76,12 +76,32 @@ public class Camera {
 		}
 	}
 	
+//	public Vector3f getForward() {
+//		Vector3f rot = new Vector3f(rotation);
+//		
+//		Vector3f r = new Vector3f();
+//		r.setX((float) Math.cos(Math.toRadians(rot.getY() + 90)));
+//		r.setZ((float) Math.sin(Math.toRadians(rot.getY() + 90)));
+//		r.normalize();
+//		
+//		return new Vector3f(r);
+//	}
+	
 	public Vector3f getForward() {
+		Vector3f r = new Vector3f();
+
 		Vector3f rot = new Vector3f(rotation);
 		
-		Vector3f r = new Vector3f();
-		r.setX((float) Math.cos(Math.toRadians(rot.getY() + 90)));
-		r.setZ((float) Math.sin(Math.toRadians(rot.getY() + 90)));
+		float cosY = (float) Math.cos(Math.toRadians(rot.getY() + 90));
+		float sinY = (float) Math.sin(Math.toRadians(rot.getY() + 90));
+		float cosP = (float) Math.cos(Math.toRadians(rot.getX()));
+		float sinP = (float) Math.sin(Math.toRadians(rot.getX()));
+		
+		//Euler Angles
+		r.setX(cosY * cosP);
+		r.setY(sinP);
+		r.setZ(sinY * cosP);
+		
 		r.normalize();
 		
 		return new Vector3f(r);
