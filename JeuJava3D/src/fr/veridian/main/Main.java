@@ -1,25 +1,30 @@
 package fr.veridian.main;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import fr.veridian.main.game.Game;
 import fr.veridian.main.math.Vector3f;
 import fr.veridian.main.render.Camera;
 import fr.veridian.main.render.DisplayManager;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
 
-	public static final float FRAME_CAP = 60;
+	public static final float FRAME_CAP = 9000;
 	boolean running = false;
 
 	Camera cam;
+	Game game;
 	
 	public Main() {
 		DisplayManager.create(720, 480, "Jeu 3D lwjgl");
 		cam = new Camera(new Vector3f(0, 0, 0));
 		cam.setPerspectiveProjection(70.0f, 0.1f, 100.0f);
+		
+		game = new Game();
 	}
 
 	public void start() {
@@ -51,7 +56,6 @@ public class Main {
 
 		while (running) {
 			if (DisplayManager.isClosed()) stop();
-			boolean rendered = false;
 
 			if (System.nanoTime() - lastTickTime > tickTime) {
 				lastTickTime += tickTime;
@@ -62,7 +66,6 @@ public class Main {
 				render();
 				DisplayManager.update();
 				frames++;
-				rendered = true;
 			}else {
 				try {
 					Thread.sleep(1);
@@ -83,9 +86,11 @@ public class Main {
 
 	public void update() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) Mouse.setGrabbed(false);
-		if (Mouse.isButtonDown(0)) Mouse.setGrabbed(true);
+		if (Mouse.isButtonDown(0) && !Mouse.isGrabbed()) Mouse.setGrabbed(true);
 		if (!Mouse.isGrabbed()) return;
+		
 		cam.input();
+		game.update();
 	}
 
 	public void render() {
@@ -95,36 +100,8 @@ public class Main {
 		DisplayManager.clearBuffers();
 		cam.getPerspectiveProjection();
 		cam.update();
-
-		glBegin(GL_TRIANGLES);
 		
-		glColor3f(1, 1, 1);
-	
-		glVertex3f(0, 0, 0);
-		glVertex3f(1, 0, -1);
-		glVertex3f(1, 0, 0);
-
-		glVertex3f(0, 0, -1);
-		glVertex3f(1, 0, -1);
-		glVertex3f(0, 0, 0);
-
-		glVertex3f(0, 0, -1);
-		glColor3f(1, 0, 0);glVertex3f(0.5f, 1, -0.5f);glColor3f(1, 1, 1);
-		glVertex3f(1, 0, -1);
-		
-		glVertex3f(0, 0, -1);
-		glVertex3f(0, 0, 0);
-		glColor3f(0, 1, 0);glVertex3f(0.5f, 1, -0.5f);glColor3f(1, 1, 1);
-
-		glColor3f(0, 0, 1);glVertex3f(0.5f, 1, -0.5f);glColor3f(1, 1, 1);
-		glVertex3f(1, 0, 0);
-		glVertex3f(1, 0, -1);
-
-		glVertex3f(0, 0, 0);
-		glVertex3f(1, 0, 0);
-		glColor3f(1, 1, 0);glVertex3f(0.5f, 1, -0.5f);
-		
-		glEnd();
+		game.render();
 	}
 
 	public static void main(String[] args) {

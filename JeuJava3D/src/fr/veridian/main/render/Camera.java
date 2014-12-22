@@ -43,7 +43,7 @@ public class Camera {
 			glRotatef(rotation.getX(), 1, 0, 0);
 			glRotatef(rotation.getY(), 0, 1, 0);
 			glRotatef(rotation.getZ(), 0, 0, 1);
-			glTranslatef(position.getX(), position.getY(), position.getZ());
+			glTranslatef(-position.getX(), -position.getY(), -position.getZ());
 		glPopMatrix();
 	}
 	
@@ -69,33 +69,22 @@ public class Camera {
 		
 		//TODO: temp code
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			position.add(new Vector3f(0, -1, 0).mul(moveSpeed));
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 			position.add(new Vector3f(0, 1, 0).mul(moveSpeed));
 		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+			position.add(new Vector3f(0, -1, 0).mul(moveSpeed));
+		}
 	}
-	
-//	public Vector3f getForward() {
-//		Vector3f rot = new Vector3f(rotation);
-//		
-//		Vector3f r = new Vector3f();
-//		r.setX((float) Math.cos(Math.toRadians(rot.getY() + 90)));
-//		r.setZ((float) Math.sin(Math.toRadians(rot.getY() + 90)));
-//		r.normalize();
-//		
-//		return new Vector3f(r);
-//	}
 	
 	public Vector3f getForward() {
 		Vector3f r = new Vector3f();
 
 		Vector3f rot = new Vector3f(rotation);
 		
-		float cosY = (float) Math.cos(Math.toRadians(rot.getY() + 90));
-		float sinY = (float) Math.sin(Math.toRadians(rot.getY() + 90));
-		float cosP = (float) Math.cos(Math.toRadians(rot.getX()));
-		float sinP = (float) Math.sin(Math.toRadians(rot.getX()));
+		float cosY = (float) Math.cos(Math.toRadians(rot.getY() - 90));
+		float sinY = (float) Math.sin(Math.toRadians(rot.getY() - 90));
+		float cosP = (float) Math.cos(Math.toRadians(-rot.getX()));
+		float sinP = (float) Math.sin(Math.toRadians(-rot.getX()));
 		
 		//Euler Angles
 		r.setX(cosY * cosP);
@@ -111,7 +100,7 @@ public class Camera {
 		return new Vector3f(getForward().mul(-1));
 	}
 	
-	public Vector3f getLeft() {
+	public Vector3f getRight() {
 		Vector3f rot = new Vector3f(rotation);
 		
 		Vector3f r = new Vector3f();
@@ -122,8 +111,8 @@ public class Camera {
 		return new Vector3f(r);
 	}
 	
-	public Vector3f getRight() {
-		return new Vector3f(getLeft().mul(-1));
+	public Vector3f getLeft() {
+		return new Vector3f(getRight().mul(-1));
 	}
 	
 	public Vector3f getPosition() {
