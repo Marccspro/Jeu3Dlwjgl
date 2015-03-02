@@ -9,7 +9,7 @@ import fr.veridian.main.math.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Camera {
-	public static float mouseSpeed = 0.5f;
+	public static float mouseSpeed = 0.3f;
 	public static float moveSpeed = 0.05f;
 	
 	float fov;

@@ -19,6 +19,7 @@ public class DisplayManager {
 			
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
+			glEnable(GL_TEXTURE_2D);
 			
 			glEnable(GL_FOG);
 			

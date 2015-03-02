@@ -8,9 +8,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import fr.veridian.main.game.blocks.Block;
-import fr.veridian.main.game.blocks.SolidBlock;
+import fr.veridian.main.game.blocks.WallBlock;
 import fr.veridian.main.math.Vector3f;
 import fr.veridian.main.render.Renderer;
+import fr.veridian.main.render.Texture;
 
 public class Level {
 	int renderingList;
@@ -21,7 +22,7 @@ public class Level {
 	public Level() {
 		compile();
 	}
-
+	
 	public void compile() {
 		BufferedImage map = null;
 		try {
@@ -46,7 +47,7 @@ public class Level {
 					blocks[i] = new Block(x, y);
 				
 				if (pixels[i] == 0xFFffffff)
-					blocks[i] = new SolidBlock(x, y);
+					blocks[i] = new WallBlock(x, y);
 				
 			}
 		}
@@ -64,24 +65,24 @@ public class Level {
 				Block block = getBlock(x, y);
 				
 				if (!block.isSolid()) {
-					Renderer.setFloorData(x, y, new Vector3f(1, 1, 1));
-					Renderer.setCeilingData(x, y, new Vector3f(1, 1, 1));
+					Renderer.setFloorData(x, y, new Vector3f(1, 1, 1), block.getTexture(Block.FLOOR_TEXTURE));
+					Renderer.setCeilingData(x, y, new Vector3f(1, 1, 1), block.getTexture(Block.CEILING_TEXTURE));
 				}
 
 				Block left = getBlock(x + 1, y);
 				Block down = getBlock(x, y + 1);
-				if (block.isSolid()) {
-					if (!left.isSolid())
-						Renderer.setWallData(x + 1, y + 1, x + 1, y, new Vector3f(0.9f, 0.9f, 0.9f));
+				if (block.isWall()) {
+					if (!left.isWall())
+						Renderer.setWallData(x + 1, y + 1, x + 1, y, new Vector3f(0.9f, 0.9f, 0.9f), block.getTexture(Block.WALL_TEXTURE));
 					
-					if (!down.isSolid())
-						Renderer.setWallData(x, y + 1, x + 1, y + 1, new Vector3f(0.8f, 0.8f, 0.8f));					
-				}else {
-					if (left.isSolid())
-						Renderer.setWallData(x + 1, y, x + 1, y + 1, new Vector3f(0.9f, 0.9f, 0.9f));
+					if (!down.isWall())
+						Renderer.setWallData(x, y + 1, x + 1, y + 1, new Vector3f(0.8f, 0.8f, 0.8f), block.getTexture(Block.WALL_TEXTURE));
+				} else {
+					if (left.isWall())
+						Renderer.setWallData(x + 1, y, x + 1, y + 1, new Vector3f(0.9f, 0.9f, 0.9f), block.getTexture(Block.WALL_TEXTURE));
 					
-					if (down.isSolid())
-						Renderer.setWallData(x + 1, y + 1, x, y + 1, new Vector3f(0.8f, 0.8f, 0.8f));
+					if (down.isWall())
+						Renderer.setWallData(x + 1, y + 1, x, y + 1, new Vector3f(0.8f, 0.8f, 0.8f), block.getTexture(Block.WALL_TEXTURE));
 				}
 
 			}
@@ -92,7 +93,7 @@ public class Level {
 	
 	public Block getBlock(int x, int y) {
 		if (x < 0 || y < 0 || x >= width || y >= height) {
-			return new SolidBlock(x, y);
+			return new WallBlock(x, y);
 		}
 		return blocks[x + y * width];
 	}
@@ -102,6 +103,7 @@ public class Level {
 	}
 
 	public void render() {
+		Texture.env.bind();
 		glCallList(renderingList);
 	}
 }

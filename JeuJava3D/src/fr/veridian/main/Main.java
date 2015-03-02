@@ -10,6 +10,8 @@ import fr.veridian.main.game.Game;
 import fr.veridian.main.math.Vector3f;
 import fr.veridian.main.render.Camera;
 import fr.veridian.main.render.DisplayManager;
+import fr.veridian.main.render.Renderer;
+import fr.veridian.main.render.Shader;
 
 public class Main {
 
@@ -100,6 +102,10 @@ public class Main {
 		DisplayManager.clearBuffers();
 		cam.getPerspectiveProjection();
 		cam.update();
+		
+		Renderer.addFog(0.1f, new Vector3f(0.5f, 0, 0.5f));
+		
+		Shader.MAIN.bind();
 		
 		game.render();
 	}
